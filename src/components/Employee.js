@@ -1,6 +1,3 @@
-import EditEmployee from "./EditEmployee.js";
-
-
 function Employee(props) {
     
     return (
@@ -18,12 +15,13 @@ function Employee(props) {
                         {props.role}
                     </p>
                 </div>
-                <EditEmployee
+                {/* <EditEmployee
                     id={props.id}
                     name={props.name}                    
                     role={props.role}
                     updateEmployee = {props.updateEmployee}
-                />
+                /> */}
+                {props.editEmployee}
                 
             </div>
         </div>
