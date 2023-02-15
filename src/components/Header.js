@@ -4,15 +4,15 @@ import { Bars3Icon, BellIcon, XMarkIcon } from '@heroicons/react/24/outline'
 import { NavLink } from 'react-router-dom';
 
 const navigation = [
-    { name: 'Employees', href: '/' },
-    { name: 'Customers', href: '/Customers' },
-    { name: 'Projects', href: '/other' },
+    { name: 'Employees', href: '/employees' },
+    { name: 'Customers', href: '/customers' },
+    { name: 'Dictionary', href: '/dictionary' },
     { name: 'Calendar', href: '/other2' },
 ]
 
-function classNames(...classes) {
-    return classes.filter(Boolean).join(' ')
-}
+// function classNames(...classes) {
+//     return classes.filter(Boolean).join(' ')
+// }
 
 export default function Header(props) {
     return (
@@ -48,11 +48,12 @@ export default function Header(props) {
                                                     //     'px-3 py-2 rounded-md text-sm font-medium'
                                                     // )}
                                                     className={({ isActive }) => {
-                                                        return `'px-3 py-2 rounded-md text-sm font-medium no-underline' 
+                                                        return (`no-underline px-3 py-2 rounded-md text-sm font-medium 
                                                         ${isActive
-                                                                ? 'no-underline bg-purple-900 text-white'
-                                                                : 'no-underline text-gray-200 hover:bg-purple-800 hover:text-white'
+                                                                ? 'bg-purple-900 text-white'
+                                                                : 'text-gray-200 hover:bg-purple-800 hover:text-white'
                                                             }`
+                                                        )
                                                     }}
                                                 // aria-current={item.current ? 'page' : undefined}
                                                 >
@@ -72,7 +73,7 @@ export default function Header(props) {
                                     </button>
 
                                     {/* Profile dropdown */}
-                                    <Menu as="div" className="relative ml-3">
+                                    {/* <Menu as="div" className="relative ml-3">
                                         <div>
                                             <Menu.Button className="flex rounded-full bg-gray-800 text-sm focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-800">
                                                 <span className="sr-only">Open user menu</span>
@@ -120,7 +121,7 @@ export default function Header(props) {
                                                 </Menu.Item>
                                             </Menu.Items>
                                         </Transition>
-                                    </Menu>
+                                    </Menu> */}
                                 </div>
                             </div>
                         </div>
@@ -128,26 +129,27 @@ export default function Header(props) {
                         <Disclosure.Panel className="sm:hidden">
                             <div className="space-y-1 px-2 pt-2 pb-3">
                                 {navigation.map((item) => (
-                                    <Disclosure.Button
+                                    <NavLink
                                         key={item.name}
-                                        as="a"
-                                        href={item.href}
-                                        className={classNames(
-                                            item.current ? 'bg-gray-900 text-white' : 'text-gray-300 hover:bg-gray-700 hover:text-white',
-                                            'block px-3 py-2 rounded-md text-base font-medium'
-                                        )}
-                                        aria-current={item.current ? 'page' : undefined}
-                                    >
+                                        to={item.href}
+                                        className={({ isActive }) => {
+                                            return ("no-underline block px-3 py-2 rounded-md text-base font-medium " +
+                                                (isActive
+                                                    ? 'bg-purple-900 text-white'
+                                                    : 'text-gray-200 hover:bg-purple-800 hover:text-white')
+                                            )
+                                        }}>
                                         {item.name}
-                                    </Disclosure.Button>
+                                    </NavLink>
                                 ))}
                             </div>
                         </Disclosure.Panel>
                     </>
                 )}
             </Disclosure>
-            {props.children}
-            <footer>Example</footer>
+            <div className='bg-gray-200'>
+                <div className="max-w-7xl mx-auto min-h-screen px-3 py-2">{props.children}</div>
+            </div>
         </>
     );
 }

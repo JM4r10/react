@@ -21,8 +21,7 @@ function Employee(props) {
                     role={props.role}
                     updateEmployee = {props.updateEmployee}
                 /> */}
-                {props.editEmployee}
-                
+                {props.editEmployee}                
             </div>
         </div>
     )
