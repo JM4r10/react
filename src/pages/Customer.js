@@ -6,66 +6,206 @@ import { baseURL } from "../shared";
 
 export default function Customer() {
 
-    const [customer, setCustomer] = useState();
-    const [notFound, setNotFound] = useState(false);
     const { id } = useParams(); // Surrounding a variable on curly braces allows to assign it the property of an object, in this case the one useParams() returns.
     const navigate = useNavigate();
+    const [customer, setCustomer] = useState();
+    const [tempCustomer, setTempCustomer] = useState();
+    const [catStatus, setCatStatus] = useState(undefined);
+    const [notFound, setNotFound] = useState(false);
+    const [changed, setChanged] = useState(false);
+    const [error, setError] = useState();
+
+    useEffect(() => {
+        if (!customer) return;
+        if (!customer) return;
+
+        let equal = true;
+        if (customer.name !== tempCustomer.name) equal = false;
+
+        if (customer.industry !== tempCustomer.industry) equal = false;
+
+        if (equal) setChanged(false);
+
+    });
 
     useEffect(() => {
         const url = baseURL + 'api/customers/' + id;
         fetch(url)
             .then((response => {
+                if (response.status === 404) {
+                    setCatStatus(response.status)
+                    setNotFound(true);
+                }
                 if (!response.ok) {
-                    if (response.status === 404) {
-                        //redirect to 404 page
-                        // navigate('/404');
-                        //render a 404 component
-                        setNotFound(true)
-                    }
+                    //redirect to 404 page
+                    // navigate('/404');
+                    //render a 404 component
+                    setCatStatus(response.status)
                     throw new Error('Something went wrong with the response');
                 }
+                setCatStatus(response.status)
                 return response.json()
             }))
             .then((data) => {
-                console.log(data)
+
                 setCustomer(data.customer)
+                setTempCustomer(data.customer);
+                setError(undefined);
             })
-            .catch(e => console.log(e))
+            .catch(e => {
+                setError(e.message);
+                console.log(e);
+            })
 
     }, []);
+
+    function updateCustomer(event) {
+        event.preventDefault();
+        const url = baseURL + 'api/customers/' + id;
+        fetch(url, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(tempCustomer)
+        })
+            .then((response) => {
+
+                if (!response.ok) {
+                    setCatStatus(response.status)
+                    throw new Error('Something went wrong while updating data');
+                }
+                setCatStatus(response.status)
+                return response.json();
+            })
+            .then((data) => {
+                setCustomer(data.customer)
+                setChanged(false);
+                setError(undefined);
+            })
+            .catch(e => {
+                setError(e.message);
+            })
+    }
 
     function deleteCustomer() {
         const url = baseURL + 'api/customers/' + id;
         fetch(url, {
-            method: 'DELETE', headers: {
+            method: 'DELETE',
+            headers: {
                 'Content-Type': 'application/json'
             }
         })
             .then((response) => {
                 if (!response.ok) {
-                    throw new Error('Something went wrong')
+                    setCatStatus(response.status)
+                    throw new Error('Something went wrong while deleting data')
                 }
+                setCatStatus(response.status);
+                setError(undefined);
                 navigate('/customers');
             })
-            .catch(e => console.log(e))
+            .catch(e => setError(e.message))
     }
 
     return (
-        <>
-            {notFound ? <NotFound /> :
-                <>
-                    {customer ?
-                        <div>
-                            <h1>{customer.name}</h1>
-                            <p>{customer.id}</p>
-                            <p>{customer.industry}</p>
+        <div className="p-3">
+            {notFound ? <NotFound errorName={catStatus} /> : null}
+
+            {customer ?
+                <div>
+                    <form
+                        className="w-full max-w-sm"
+                        id="customer"
+                    >
+                        <div className="md:flex md:items-center mb-6">
+                            <div className="md:w-1/4">
+                                <label htmlFor='name'>Name</label>
+                            </div>
+                            <div className="md:w-3/4">
+                                <input
+                                    className="bg-gray-100 appearance-none border-2 border-gray-200 rounded w-full py-2 px-2 text-gray-700 leading-tight focus:outline-none focus:bg-white focus:border-purple-500"
+                                    id='name'
+                                    type='text'
+                                    value={tempCustomer.name}
+                                    onChange={(e) => {
+                                        setChanged(true);
+                                        setTempCustomer({
+                                            ...tempCustomer,
+                                            name: e.target.value
+                                        });
+                                    }}
+                                />
+                            </div>
+                        </div>
+                        <div className="md:flex md:items-center mb-6">
+                            <div className="md:w-1/4">
+                                <label htmlFor='industry'>Industry</label>
+                            </div>
+                            <div className="md:w-3/4">
+                                <input
+                                    id='id'
+                                    className="bg-gray-100 appearance-none border-2 border-gray-200 rounded w-full py-2 px-2 text-gray-700 leading-tight focus:outline-none focus:bg-white focus:border-purple-500"
+                                    type='text'
+                                    value={tempCustomer.industry}
+                                    onChange={(e) => {
+                                        setChanged(true);
+                                        setTempCustomer({
+                                            ...tempCustomer,
+                                            industry: e.target.value
+                                        });
+                                    }}
+                                />
+                            </div>
+                        </div>
+                    </form>
+                    {changed ?
+                        <div className="mb-2">
+                            <button
+                                className='bg-gray-400 hover:bg-red-600 text-white font-bold py-2 px-4 mr-2 border border-blue-700 rounded'
+                                onClick={(e) => {
+                                    setTempCustomer({ ...customer })
+                                    setChanged(false)
+                                }}
+                            >
+                            CANCEL
+                            </button>
+
+                            <button
+                                className='bg-purple-500 hover:bg-purple-700 text-white font-bold py-2 px-4 border border-blue-700 rounded'
+                                form="customer"
+                                onClick={updateCustomer}
+                            >
+                            SAVE
+                            </button>
                         </div>
                         : null}
-                    <button onClick={deleteCustomer}>DELETE</button>
-                </>
+                    <button className='block bg-slate-800 hover:bg-red-600 text-white font-bold py-2 px-4 border border-blue-700 rounded' onClick={deleteCustomer}
+                    >
+                        DELETE
+                    </button>
+
+                </div>
+                : null
             }
-            <br></br>
-            <Link to='/customers'>Go back to Customers</Link>
-        </>
+            {error
+                ? <>
+                    <p>{error}</p>
+                </>
+                : null}
+            <br />
+            <Link
+                className="no-underline bg-purple-500 hover:bg-purple-700 text-white font-bold py-2 px-4 border rounded"
+                to='/customers'
+            >
+                ← Go back
+            </Link>
+            {catStatus
+                !== 404
+                ? <div className="m-2">
+                    <NotFound errorName={catStatus} />
+                </div>
+                : null}
+        </div>
     )
 }

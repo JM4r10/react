@@ -10,7 +10,6 @@ export default function Customers() {
 
 
     useEffect(() => {
-        console.log('Fetching...')
         fetch(baseURL + 'api/customers')
             .then((response => response.json()))
             .then((data) => {
@@ -53,19 +52,21 @@ export default function Customers() {
     return (
         <>
             <h1>Here are our customers:</h1>
-            <ul>
+            
                 {customers ?
                     customers.map((customer) => {
                         return (
-                            <li key={customer.id}>
+                            <div className="m-2" key={customer.id}>
                                 <Link to={'/customers/' + customer.id}>
-                                    $ {customer.name}
+                                    <button className="no-underline bg-slate-500 hover:bg-purple-700 text-white font-bold py-2 px-3 border rounded">
+                                    {customer.name}
+                                    </button>
                                 </Link>
-                            </li>
+                            </div>
                         )
                     })
                     : null}
-            </ul>
+            
             <AddCustomer newCustomer={newCustomer} show={show} toggleShow={toggleShow} />
         </>)
 }

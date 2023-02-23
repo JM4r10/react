@@ -3,17 +3,13 @@ import React, { useState } from 'react';
 import Modal from 'react-bootstrap/Modal';
 
 export default function AddCustomer(props) {
-    const [show, setShow] = useState(props.show);
 
     const [name, setName] = useState('');
-    const [industry, setIndustry] = useState('');
-
-    const handleClose = () => setShow(false);
-    const handleShow = () => setShow(true);
+    const [industry, setIndustry] = useState('');    
 
     const resetState = () =>{
         setTimeout(
-            props.toggleShow,           
+            props.toggleShow(),           
             setName(''),
             setIndustry(''),
             0)
@@ -21,12 +17,11 @@ export default function AddCustomer(props) {
     return (
         <>
             <button
-                className='block mx-auto m-2 bg-purple-600 hover:bg-purple-700 text-white font-bold py-2 px-4 border border-blue-700 rounded'
+                className='block mt-4 bg-purple-600 hover:bg-purple-700 text-white font-bold py-2 px-4 border border-blue-700 rounded'
                 onClick={resetState}
             >
                 + Add Customer
             </button>
-
 
             <Modal
                 show={props.show}
@@ -39,12 +34,12 @@ export default function AddCustomer(props) {
                     <form
                         onSubmit={(e) => {
                             e.preventDefault(); //prevents a page refresh 
-                            handleClose();
+                            props.toggleShow();
                             props.newCustomer(name, industry);
                             setName('');
                             setIndustry('');
                         }}
-                        id='addModal'
+                        id='addCustomerModal'
                         className="w-full max-w-sm"
                     >
                         <div className="md:flex md:items-center mb-6">
@@ -105,7 +100,7 @@ export default function AddCustomer(props) {
                     </button>
                     <button
                         className='bg-purple-600 hover:bg-purple-700 text-white font-bold py-2 px-4 border border-blue-700 rounded'
-                        form='addModal'
+                        form='addCustomerModal'
                     >
                         Add
                     </button>
