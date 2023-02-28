@@ -30,7 +30,12 @@ export default function Customer() {
 
     useEffect(() => {
         const url = baseURL + 'api/customers/' + id;
-        fetch(url)
+        fetch(url, {
+            headers: {
+                'Content-type': 'application/json',
+                Authorization: 'Bearer ' + localStorage.getItem('access'),
+            },
+        })
             .then((response => {
                 if (response.status === 404) {
                     setCatStatus(response.status);
@@ -67,12 +72,15 @@ export default function Customer() {
         fetch(url, {
             method: 'POST',
             headers: {
-                'Content-Type': 'application/json'
+                'Content-type': 'application/json',
+                Authorization: 'Bearer ' + localStorage.getItem('access'),
             },
             body: JSON.stringify(tempCustomer)
         })
             .then((response) => {
-
+                if (response.status === 401) {
+                    navigate('/login');
+                }
                 if (!response.ok) {
                     setCatStatus(response.status)
                     throw new Error('Something went wrong while updating data');
@@ -95,10 +103,15 @@ export default function Customer() {
         fetch(url, {
             method: 'DELETE',
             headers: {
-                'Content-Type': 'application/json'
-            }
+                'Content-type': 'application/json',
+                Authorization: 'Bearer ' + localStorage.getItem('access'),
+            },
         })
             .then((response) => {
+                if (response.status === 401) {
+                    navigate('/login');
+                    setCatStatus(response.status);
+                }
                 if (!response.ok) {
                     setCatStatus(response.status)
                     throw new Error('Something went wrong while deleting data')

@@ -8,15 +8,22 @@ export default function Customers() {
     const [customers, setCustomers] = useState();
     const [show, setShow] = useState(false);
     const navigate = useNavigate();
-    
+
     function toggleShow() {
         setShow(!show);
     }
 
     useEffect(() => {
-        fetch(baseURL + 'api/customers')
+        const url = baseURL + 'api/customers';
+        // Since GET method is the default, is not necesary to put it in the body of the second param 
+        fetch(url, {
+            headers: {
+                'Content-type': 'application/json',
+                Authorization: 'Bearer ' + localStorage.getItem('access'),
+            },
+        })
             .then((response) => {
-                if(response.status === 401){
+                if (response.status === 401) {
                     navigate('/login');
                 }
                 return response.json()
@@ -28,7 +35,7 @@ export default function Customers() {
             })
             .catch((e) => console.log(e))
     }, []);
-    
+
     function newCustomer(name, industry) {
         const data = {
             name: name,
