@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { v4 as uuid4 } from 'uuid';
 import { useNavigate, useParams, Link } from "react-router-dom";
-import NotFound from "../components/NotFound";
+import CatStatus from "../components/CatStatus";
 import DefinitionSearch from "../components/DefinitionSearch";
 
 export default function Definition() {
@@ -9,11 +9,10 @@ export default function Definition() {
     const [word, setWord] = useState();
     const [notFound, setNotFound] = useState(false);
     const [error, setError] = useState(false);
+    const [catStatus, setCatStatus] = useState(undefined);
 
     let { search } = useParams();
     // const navigate = useNavigate();
-
-
 
     useEffect(() => {
         // const url = "http://httpstat.us/404";
@@ -24,9 +23,11 @@ export default function Definition() {
                 if (response.status === 404) {
                     // navigate('/404');
                     setNotFound(true);
+                    setCatStatus(response.status);
                 }
                 if (!response.ok) {
-                    setError(true)
+                    setCatStatus(response.status);
+                    setError(true)                    
                     throw new Error('Something went wrong');
                 }
                 return response.json()
@@ -43,8 +44,14 @@ export default function Definition() {
     if (notFound === true) {
         return (
             <>
-                <NotFound />
-                <Link className="flex justify-center my-3" to='/dictionary'>Please try another word</Link>
+                {catStatus
+                    ?
+                    <>
+                        <CatStatus errorName={catStatus} />
+                        <Link className="flex justify-center my-3" to='/dictionary'>Please try another word</Link>
+                    </>
+                    : null}
+
             </>
         )
 
@@ -53,6 +60,7 @@ export default function Definition() {
     if (error === true) {
         return (
             <>
+                <CatStatus errorName={catStatus} />
                 <p>Something went wrong</p>
                 <Link className="flex justify-center my-3" to='/dictionary'>Please try another word</Link>
             </>
@@ -76,8 +84,8 @@ export default function Definition() {
                             </p>
                         )
                     })}
-                    <p>Search again:</p>
-                    <DefinitionSearch/>
+                    <p>Would you like to search again?</p>
+                    <DefinitionSearch />
                 </>
             ) : null}
         </>

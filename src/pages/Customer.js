@@ -1,6 +1,6 @@
 import { useParams, Link, useNavigate } from "react-router-dom"
 import { useEffect, useState } from "react";
-import NotFound from "../components/NotFound";
+import CatStatus from "../components/CatStatus";
 import { baseURL } from "../shared";
 
 
@@ -33,8 +33,11 @@ export default function Customer() {
         fetch(url)
             .then((response => {
                 if (response.status === 404) {
-                    setCatStatus(response.status)
+                    setCatStatus(response.status);
                     setNotFound(true);
+                } else if (response.status === 401) {
+                    navigate('/login');
+                    setCatStatus(response.status);
                 }
                 if (!response.ok) {
                     //redirect to 404 page
@@ -47,7 +50,6 @@ export default function Customer() {
                 return response.json()
             }))
             .then((data) => {
-
                 setCustomer(data.customer)
                 setTempCustomer(data.customer);
                 setError(undefined);
@@ -110,13 +112,14 @@ export default function Customer() {
 
     return (
         <div className="p-3">
-            {notFound ? <NotFound errorName={catStatus} /> : null}
+            {notFound ? <CatStatus errorName={catStatus} /> : null}
 
             {customer ?
                 <div>
                     <form
                         className="w-full max-w-sm"
                         id="customer"
+                        onSubmit={updateCustomer}
                     >
                         <div className="md:flex md:items-center mb-6">
                             <div className="md:w-1/4">
@@ -144,7 +147,7 @@ export default function Customer() {
                             </div>
                             <div className="md:w-3/4">
                                 <input
-                                    id='id'
+                                    id='industry'
                                     className="bg-gray-100 appearance-none border-2 border-gray-200 rounded w-full py-2 px-2 text-gray-700 leading-tight focus:outline-none focus:bg-white focus:border-purple-500"
                                     type='text'
                                     value={tempCustomer.industry}
@@ -162,25 +165,28 @@ export default function Customer() {
                     {changed ?
                         <div className="mb-2">
                             <button
-                                className='bg-gray-400 hover:bg-red-600 text-white font-bold py-2 px-4 mr-2 border border-blue-700 rounded'
+                                className='bg-gray-500 hover:bg-red-600 text-white font-bold py-2 px-4 mr-2 border border-blue-700 rounded'
                                 onClick={(e) => {
                                     setTempCustomer({ ...customer })
                                     setChanged(false)
                                 }}
                             >
-                            CANCEL
+                                CANCEL
                             </button>
 
                             <button
-                                className='bg-purple-500 hover:bg-purple-700 text-white font-bold py-2 px-4 border border-blue-700 rounded'
+                                className='bg-purple-500 hover:bg-purple-700 text-white font-bold py-2 px-4 rounded'
                                 form="customer"
-                                onClick={updateCustomer}
+                            // onClick={updateCustomer}
                             >
-                            SAVE
+                                SAVE
                             </button>
+
                         </div>
                         : null}
-                    <button className='block bg-slate-800 hover:bg-red-600 text-white font-bold py-2 px-4 border border-blue-700 rounded' onClick={deleteCustomer}
+                    <button
+                        className='block bg-gray-500 hover:bg-red-600 text-white font-bold py-2 px-4 rounded'
+                        onClick={deleteCustomer}
                     >
                         DELETE
                     </button>
@@ -200,10 +206,9 @@ export default function Customer() {
             >
                 ← Go back
             </Link>
-            {catStatus
-                !== 404
+            {catStatus !== 404
                 ? <div className="m-2">
-                    <NotFound errorName={catStatus} />
+                    <CatStatus errorName={catStatus} />
                 </div>
                 : null}
         </div>

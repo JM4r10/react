@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react"
 
-export default function NotFound(props) {
+export default function CatStatus(props) {
     
     const [errorCat, setErrorCat] = useState()
         
@@ -10,7 +10,7 @@ export default function NotFound(props) {
     
     return (
         <>
-            {errorCat ? <img className="m-auto pt-2" src={errorCat} alt='404 - file not found' /> : null}
+            {errorCat ? <img className="m-auto pt-2" src={errorCat} alt='http cat_status' /> : null}
         </>
     )
 }
