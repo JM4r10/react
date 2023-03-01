@@ -1,11 +1,13 @@
 import { useParams, Link, useNavigate, useLocation } from "react-router-dom"
-import { useEffect, useState } from "react";
+import { useEffect, useState, useContext } from "react";
 import CatStatus from "../components/CatStatus";
 import { baseURL } from "../shared";
+import { LoginContext } from "../App";
 
 
 export default function Customer() {
 
+    const [loggedIn, setLoggedIn] = useContext(LoginContext);
     const { id } = useParams(); // Surrounding a variable on curly braces allows to assign it the property of an object, in this case the one useParams() returns.
     const navigate = useNavigate();
     const [customer, setCustomer] = useState();
@@ -15,7 +17,7 @@ export default function Customer() {
     const [changed, setChanged] = useState(false);
     const [error, setError] = useState();
     const location = useLocation();
-
+    
     useEffect(() => {
         if (!customer) return;
         if (!customer) return;
@@ -42,6 +44,7 @@ export default function Customer() {
                     setCatStatus(response.status);
                     setNotFound(true);
                 } else if (response.status === 401) {
+                    setLoggedIn(false);
                     navigate('/login', {
                         state: {
                             previousUrl: location.pathname,
@@ -84,6 +87,7 @@ export default function Customer() {
         })
             .then((response) => {
                 if (response.status === 401) {
+                    setLoggedIn(false);
                     navigate('/login', {
                         state: {
                             previousUrl: location.pathname,
@@ -118,6 +122,7 @@ export default function Customer() {
         })
             .then((response) => {
                 if (response.status === 401) {
+                    setLoggedIn(false);
                     navigate('/login', {
                         state: {
                             previousUrl: location.pathname,

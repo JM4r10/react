@@ -1,11 +1,12 @@
-import { useState, useEffect } from "react"
+import { useState, useEffect, useContext } from "react";
 import { baseURL } from "../shared";
 import CatStatus from "../components/CatStatus";
 import { useLocation, useNavigate } from "react-router-dom";
-
+import { LoginContext } from "../App";
 
 export default function Login() {
 
+    const[loggedIn, setLoggedIn] = useContext(LoginContext);
     const [username, setUsername] = useState('');
     const [password, setPassword] = useState('');
     const [catStatus, setCatStatus] = useState(undefined);
@@ -40,6 +41,7 @@ export default function Login() {
                 return response.json()
             })
             .then(data => {
+                setLoggedIn(true);
                 localStorage.setItem('access', data.access);
                 localStorage.setItem('refresh', data.refresh);
                 console.log(location);

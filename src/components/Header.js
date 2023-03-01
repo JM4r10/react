@@ -1,13 +1,14 @@
-import { Fragment } from 'react'
+import { Fragment, useContext, useEffect } from 'react'
 import { Disclosure, Menu, Transition } from '@headlessui/react'
 import { Bars3Icon, BellIcon, XMarkIcon } from '@heroicons/react/24/outline'
 import { NavLink } from 'react-router-dom';
+import { LoginContext } from '../App';
+
 
 const navigation = [
     { name: 'Employees', href: '/employees' },
     { name: 'Customers', href: '/customers' },
     { name: 'Dictionary', href: '/dictionary' },
-    { name: 'Calendar', href: '/other2' },
 ]
 
 // function classNames(...classes) {
@@ -15,6 +16,9 @@ const navigation = [
 // }
 
 export default function Header(props) {
+
+    const [loggedIn, setLoggedIn] = useContext(LoginContext);    
+
     return (
         <>
             <Disclosure as="nav" className="bg-purple-600">
@@ -23,7 +27,7 @@ export default function Header(props) {
                         <div className="mx-auto max-w-7xl px-2 sm:px-6 lg:px-8">
                             <div className="relative flex h-14 items-center justify-between">
                                 <div className="absolute inset-y-0 left-0 flex items-center sm:hidden">
-                                    {/* Mobile menu button*/}
+
                                     <Disclosure.Button className="inline-flex items-center justify-center rounded-md p-2 text-gray-400 hover:bg-gray-700 hover:text-white focus:outline-none focus:ring-2 focus:ring-inset focus:ring-white">
                                         <span className="sr-only">Open main menu</span>
                                         {open ? (
@@ -60,6 +64,15 @@ export default function Header(props) {
                                                     {item.name}
                                                 </NavLink>
                                             ))}
+                                            <NavLink
+                                                to={
+                                                    loggedIn
+                                                        ? '/logout'
+                                                        : '/login'}
+                                                className='no-underline block px-3 py-2 rounded-md text-base font-medium text-gray-200 hover:bg-purple-800 hover:text-white'
+                                            >
+                                                {loggedIn ? 'Logout' : 'Login'}
+                                            </NavLink>
                                         </div>
                                     </div>
                                 </div>
@@ -125,7 +138,7 @@ export default function Header(props) {
                                 </div>
                             </div>
                         </div>
-
+                        {/* Mobile menu button*/}
                         <Disclosure.Panel className="sm:hidden">
                             <div className="space-y-1 px-2 pt-2 pb-3">
                                 {navigation.map((item) => (
@@ -142,6 +155,15 @@ export default function Header(props) {
                                         {item.name}
                                     </NavLink>
                                 ))}
+                                <NavLink
+                                    to={
+                                        loggedIn
+                                            ? '/logout'
+                                            : '/login'}
+                                    className='no-underline block px-3 py-2 rounded-md text-base font-medium text-gray-200 hover:bg-purple-800 hover:text-white'
+                                >
+                                    {loggedIn ? 'Logout' : 'Login'}
+                                </NavLink>
                             </div>
                         </Disclosure.Panel>
                     </>
