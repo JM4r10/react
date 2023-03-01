@@ -1,4 +1,4 @@
-import { useParams, Link, useNavigate } from "react-router-dom"
+import { useParams, Link, useNavigate, useLocation } from "react-router-dom"
 import { useEffect, useState } from "react";
 import CatStatus from "../components/CatStatus";
 import { baseURL } from "../shared";
@@ -14,6 +14,7 @@ export default function Customer() {
     const [notFound, setNotFound] = useState(false);
     const [changed, setChanged] = useState(false);
     const [error, setError] = useState();
+    const location = useLocation();
 
     useEffect(() => {
         if (!customer) return;
@@ -41,7 +42,11 @@ export default function Customer() {
                     setCatStatus(response.status);
                     setNotFound(true);
                 } else if (response.status === 401) {
-                    navigate('/login');
+                    navigate('/login', {
+                        state: {
+                            previousUrl: location.pathname,
+                        }
+                    });
                     setCatStatus(response.status);
                 }
                 if (!response.ok) {
@@ -79,7 +84,11 @@ export default function Customer() {
         })
             .then((response) => {
                 if (response.status === 401) {
-                    navigate('/login');
+                    navigate('/login', {
+                        state: {
+                            previousUrl: location.pathname,
+                        }
+                    });
                 }
                 if (!response.ok) {
                     setCatStatus(response.status)
@@ -109,7 +118,11 @@ export default function Customer() {
         })
             .then((response) => {
                 if (response.status === 401) {
-                    navigate('/login');
+                    navigate('/login', {
+                        state: {
+                            previousUrl: location.pathname,
+                        }
+                    });
                     setCatStatus(response.status);
                 }
                 if (!response.ok) {

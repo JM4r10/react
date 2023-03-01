@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { v4 as uuid4 } from 'uuid';
-import { useNavigate, useParams, Link } from "react-router-dom";
+import { useNavigate, useParams, Link, useLocation } from "react-router-dom";
 import CatStatus from "../components/CatStatus";
 import DefinitionSearch from "../components/DefinitionSearch";
 
@@ -10,6 +10,8 @@ export default function Definition() {
     const [notFound, setNotFound] = useState(false);
     const [error, setError] = useState(false);
     const [catStatus, setCatStatus] = useState(undefined);
+    const navigate = useNavigate();
+    const location = useLocation();
 
     let { search } = useParams();
     // const navigate = useNavigate();
@@ -27,7 +29,7 @@ export default function Definition() {
                 }
                 if (!response.ok) {
                     setCatStatus(response.status);
-                    setError(true)                    
+                    setError(true)
                     throw new Error('Something went wrong');
                 }
                 return response.json()

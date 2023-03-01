@@ -1,24 +1,34 @@
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import { baseURL } from "../shared";
-import CatStatus from "../components/CatStatus"
+import CatStatus from "../components/CatStatus";
+import { useLocation, useNavigate } from "react-router-dom";
+
 
 export default function Login() {
 
-    const [username, setUsername] = useState();
-    const [password, setPassword] = useState();
+    const [username, setUsername] = useState('');
+    const [password, setPassword] = useState('');
     const [catStatus, setCatStatus] = useState(undefined);
+
+    const navigate = useNavigate();
+    const location = useLocation(); //contains the property in the state property in Customers.js
+
+    useEffect(() => {
+        console.log(location?.state?.previousUrl);
+    })
 
     function login(e) {
         e.preventDefault();
         const url = baseURL + 'api/token/';
-        fetch(url,{
+        
+        fetch(url, {
             method: 'POST',
-            headers:{
-                'Content-type':'application/json'
+            headers: {
+                'Content-type': 'application/json'
             },
             body: JSON.stringify({
                 username: username,
-                password:password,
+                password: password,
             })
         })
             .then(response => {
@@ -30,9 +40,15 @@ export default function Login() {
                 return response.json()
             })
             .then(data => {
-                localStorage.setItem('access',data.access);
-                localStorage.setItem('refresh',data.refresh);
-                console.log(localStorage);
+                localStorage.setItem('access', data.access);
+                localStorage.setItem('refresh', data.refresh);
+                console.log(location);
+                console.log(location.state);
+                //optional chaining: if you try to access the properties of a null element it returns undefined instead of throwing an exception
+                console.log(location?.state?.previousUrl);
+                navigate(location?.state?.previousUrl
+                    ? location.state.previousUrl
+                    : '/employees');
             }).catch(e => {
                 console.log(e);
             })
